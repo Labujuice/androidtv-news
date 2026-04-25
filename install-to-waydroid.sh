@@ -1,6 +1,6 @@
 #!/bin/bash
 # 尋找最新編譯的 APK
-APK_PATH=$(find app/build/outputs/apk/release/ -name "*.apk" | head -n 1)
+APK_PATH=$(find app/build/outputs/apk/debug/ -name "*.apk" | head -n 1)
 
 if [ -z "$APK_PATH" ]; then
     echo "錯誤：找不到 APK 檔案，請先執行 ./build-in-docker.sh"
