@@ -4,16 +4,26 @@ FROM ubuntu:22.04
 # 設定環境變數避免互動式安裝詢問
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 安裝基本工具、JDK 17、Python 3 及 NDK 建構所需的依賴
+# 安裝基本工具、JDK 17
 RUN apt-get update && apt-get install -y \
     openjdk-17-jdk \
     wget \
     unzip \
     git \
-    python3 \
-    python3-pip \
+    software-properties-common \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
+
+# 加入 deadsnakes PPA 並安裝 Python 3.11 (對齊 Chaquopy 版本)
+RUN add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && apt-get install -y \
+    python3.11 \
+    python3.11-dev \
+    python3.11-distutils \
+    && rm -rf /var/lib/apt/lists/*
+
+# 設定預設 Python 為 3.11
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 
 # 設定 JAVA_HOME
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
@@ -30,9 +40,13 @@ RUN mkdir -p $ANDROID_SDK_ROOT/cmdline-tools && \
 # 設定 SDK 相關環境變數
 ENV PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools
 
-# 接受授權並安裝所需的 SDK 和 NDK 組件
+# 接受授權並安裝所需的 SDK 組件 (對齊 build.gradle.kts)
 RUN yes | sdkmanager --licenses && \
-    sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools" "ndk;25.2.9519653"
+    sdkmanager "platforms;android-36" \
+               "build-tools;36.0.0" \
+               "build-tools;35.0.0" \
+               "platform-tools" \
+               "ndk;25.2.9519653"
 
 # 設定工作目錄
 WORKDIR /app
