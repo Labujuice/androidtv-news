@@ -30,10 +30,9 @@ RUN mkdir -p $ANDROID_SDK_ROOT/cmdline-tools && \
 # 設定 SDK 相關環境變數
 ENV PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools
 
-# 接受授權並安裝所需的 SDK 和 NDK 組件 (根據專案需求)
-# compileSdk = 36, NDK is required for Chaquopy
+# 接受授權並安裝所需的 SDK 和 NDK 組件
 RUN yes | sdkmanager --licenses && \
-    sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools" "ndk;25.2.9519653"
+    sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools" "ndk;25.2.9519653"
 
 # 設定工作目錄
 WORKDIR /app
