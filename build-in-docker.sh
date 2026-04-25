@@ -8,7 +8,7 @@ RED='\033[0;31m'
 NC='\033[0m' # 無顏色
 
 IMAGE_NAME="android-news-builder"
-GRADLE_TASK="assembleRelease"
+GRADLE_TASK="assembleDebug"
 
 # 檢查參數
 if [ "$1" == "clean" ]; then
@@ -40,21 +40,21 @@ docker run --rm \
     $IMAGE_NAME ./gradlew $GRADLE_TASK
 
 # 4. 結束處理
-if [ "$GRADLE_TASK" == "assembleRelease" ]; then
+if [ "$GRADLE_TASK" != "clean" ]; then
     echo -e "${BLUE}=======================================${NC}"
-    echo -e "${GREEN}[✓] Build finished!${NC}"
+    echo -e "${GREEN}[✓] $GRADLE_TASK finished!${NC}"
     
     # 搜尋並列出 APK
     echo -e "${BLUE}[*] Generated APK files:${NC}"
     APK_FILES=$(find app/build/outputs/apk/ -name "*.apk" 2>/dev/null)
     if [ -z "$APK_FILES" ]; then
-        echo -e "${RED}    No APK files found.${NC}"
+        echo -e "${RED}    No APK files found. Please check the logs above.${NC}"
     else
         while read -r line; do
             echo -e "${GREEN}    - $line${NC}"
         done <<< "$APK_FILES"
     fi
-elif [ "$GRADLE_TASK" == "clean" ]; then
+else
     echo -e "${GREEN}[✓] Clean finished!${NC}"
 fi
 echo -e "${BLUE}=======================================${NC}"

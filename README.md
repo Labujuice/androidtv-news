@@ -78,49 +78,37 @@ ytdl-options 請參考[這裡](https://github.com/yt-dlp/yt-dlp/blob/master/yt_d
 ## Cookies
 可在設定畫面匯入，請參考 https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp
 
-## 開發與測試
+## Waydroid 模擬測試 (Linux)
 
-本專案支援在 Linux 環境下使用 Docker 進行自動化編譯，並可配合 Waydroid 進行模擬測試。
+如果您在 Linux 上想要模擬電視環境執行，推薦使用 Waydroid。
 
-### 1. 使用 Docker 編譯 APK
-您不需要在本地安裝 Android SDK，只要有 Docker 即可進行編譯。
+### 1. 設定 Waydroid 為電視模式
+為了獲得與電視一致的橫屏體驗與 Leanback 介面，請執行以下設定：
 
-*   **一般編譯**：
-    ```bash
-    chmod +x build-in-docker.sh
-    ./build-in-docker.sh
-    ```
-    編譯完成後，APK 會產出在 `app/build/outputs/apk/release/` 目錄中。
-*   **清除暫存檔**：
-    ```bash
-    ./build-in-docker.sh clean
-    ```
-    *註：本指令會自動掛載 Gradle 快取目錄 (`~/.gradle_docker_cache`)，第二次以後的編譯速度會顯著提升。*
-
-### 2. 使用 Waydroid 進行模擬測試
-推薦在 Linux 上使用 Waydroid 模擬 Android TV 環境。
-
-#### 設定電視模式
-為了獲得最真實的電視體驗，建議將 Waydroid 切換為電視介面：
 ```bash
-# 設定 UI 為電視模式並調整解析度為 1080p
+# 1. 設定為電視 UI 模式
 sudo waydroid prop set persist.waydroid.ui_mode television
+
+# 2. 設定解析度為 1080p 橫向
 sudo waydroid prop set persist.waydroid.width 1920
 sudo waydroid prop set persist.waydroid.height 1080
+
+# 3. 重啟服務生效
 sudo systemctl restart waydroid-container
 ```
 
-#### 安裝與執行
-我們提供了自動化安裝腳本：
-1.  確保 Waydroid 視窗已開啟。
-2.  執行安裝腳本：
-    ```bash
-    chmod +x install-to-waydroid.sh
-    ./install-to-waydroid.sh
-    ```
-3.  **操作提示**：
-    *   使用鍵盤 **方向鍵**、**Enter** (確認)、**Esc** (返回) 來模擬電視遙控器。
-    *   直接啟動 App 指令：`waydroid app launch io.github.anenasa.news`
+### 2. 安裝與執行 App
+1.  **啟動 Waydroid 視窗**：執行 `waydroid show-full-ui`。
+2.  **自動安裝**：執行本專案提供的 `./install-to-waydroid.sh`（會自動抓取最新編譯的 APK）。
+3.  **手動安裝** (若已有 APK)：執行 `waydroid app install <APK路徑>`。
+4.  **強制啟動**：若在選單找不到圖示，可執行 `waydroid app launch io.github.anenasa.news`。
+
+### 3. 操作方式
+*   **遙控器模擬**：使用鍵盤 **方向鍵**、**Enter** (確認)、**Esc** (返回)。
+*   **畫面旋轉**：若畫面角度不對，可執行 `waydroid shell wm set-user-rotation lock 1`。
+
+## 開發與測試
+... (後接原本的開發章節)
 
 ## 許可證
 [GNU General Public License v3.0](https://github.com/anenasa/androidtv-news/blob/main/LICENSE)
