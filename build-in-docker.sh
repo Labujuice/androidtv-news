@@ -8,13 +8,31 @@ RED='\033[0;31m'
 NC='\033[0m' # 無顏色
 
 IMAGE_NAME="android-news-builder"
+# 預設為 debug 模式
 GRADLE_TASK="assembleDebug"
 
-# 檢查參數
-if [ "$1" == "clean" ]; then
-    echo -e "${YELLOW}[!] Clean mode activated.${NC}"
-    GRADLE_TASK="clean"
-fi
+# 參數解析
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --debug)
+            GRADLE_TASK="assembleDebug"
+            shift
+            ;;
+        --release)
+            GRADLE_TASK="assembleRelease"
+            shift
+            ;;
+        clean)
+            GRADLE_TASK="clean"
+            shift
+            ;;
+        *)
+            echo -e "${RED}[!] Unknown parameter: $1${NC}"
+            echo "Usage: $0 [--debug | --release | clean]"
+            exit 1
+            ;;
+    esac
+done
 
 echo -e "${BLUE}=======================================${NC}"
 echo -e "${BLUE}   Android TV News - Docker Builder    ${NC}"
